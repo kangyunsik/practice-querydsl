@@ -1,5 +1,6 @@
 package study.querydsl.entity;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,20 @@ class MemberTest {
 
     @Test
     public void testEntity(){
+
+
+        em.flush();
+        em.clear();
+
+        List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
+        for (Member member : members) {
+            System.out.println("member = " + member);
+            System.out.println("member.getTeam() = " + member.getTeam());
+        }
+    }
+
+    @BeforeEach
+    public void before(){
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
         em.persist(teamA);
@@ -33,15 +48,6 @@ class MemberTest {
         em.persist(member2);
         em.persist(member3);
         em.persist(member4);
-
-        em.flush();
-        em.clear();
-
-        List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
-        for (Member member : members) {
-            System.out.println("member = " + member);
-            System.out.println("member.getTeam() = " + member.getTeam());
-        }
     }
 
 }
