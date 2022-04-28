@@ -16,7 +16,6 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Commit
 class QuerydslApplicationTest {
 
     @Autowired
