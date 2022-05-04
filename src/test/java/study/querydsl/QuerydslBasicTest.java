@@ -1,6 +1,8 @@
 package study.querydsl;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,22 +52,69 @@ public class QuerydslBasicTest {
     public void startJPQL() {
         // Member1 을 찾아라
         String qlString =
-                "select m from Member m where m.username=:username";
+            "select m from Member m where m.username=:username";
         Member findMember = em.createQuery(qlString, Member.class)
-                .setParameter("username", "member1")
-                .getSingleResult();
+            .setParameter("username", "member1")
+            .getSingleResult();
         assertThat(findMember.getUsername()).isEqualTo("member1");
     }
 
     @Test
     public void startQuerydsl() {
         Member findMember = queryFactory
-                .select(member)
-                .from(member)
-                .where(member.username.eq("member1"))
-                .fetchOne();
+            .select(member)
+            .from(member)
+            .where(member.username.eq("member1"))
+            .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void search() {
+        Member findMember = queryFactory
+            .selectFrom(member)
+            .where(member.username.eq("member1").and(member.age.eq(10)))
+            .fetchOne();
+
+        queryFactory
+            .selectFrom(member)
+            .where(
+                member.username.eq("member2")
+                    .or(member.age.loe(25))
+            )
+            .fetchOne();
+
+        assertThat(findMember).isNotNull();
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+        assertThat(findMember.getAge()).isEqualTo(10);
+    }
+
+    @Test
+    public void resultFetch() {
+//        List<Member> fetch = queryFactory
+//            .selectFrom(member)
+//            .fetch();
+//
+//        Member fetchOne = queryFactory
+//            .select(QMember.member)
+//            .fetchOne();
+//
+//        Member fetchFirst = queryFactory
+//            .selectFrom(QMember.member)
+//            .fetchFirst();
+
+//        QueryResults<Member> results = queryFactory
+//            .selectFrom(member)
+//            .fetchResults();
+
+        //페이징 할 때 사용.
+//        long total = results.getTotal();
+//        List<Member> content = results.getResults();
+
+        queryFactory
+            .selectFrom(member)
+            .fetchCount();
     }
 }
 
