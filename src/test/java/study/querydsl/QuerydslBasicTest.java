@@ -94,7 +94,7 @@ public class QuerydslBasicTest {
             .selectFrom(member)
             .where(
                 member.username.eq("member2")
-                    .or(member.age.loe(25))
+                    .and(member.age.loe(25))
             )
             .fetchOne();
 
